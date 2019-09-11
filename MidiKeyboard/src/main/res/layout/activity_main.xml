@@ -114,6 +114,26 @@
             android:text="+10" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:weightSum="0.6">
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="onSysEx"
+            android:text="SysEx 1" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:onClick="onSysEx2"
+            android:text="SysEx 2" />
+    </LinearLayout>
+
     <com.mobileer.miditools.MusicKeyboardView
         android:id="@+id/musicKeyboardView"
         android:layout_width="wrap_content"

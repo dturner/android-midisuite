@@ -243,6 +243,7 @@ public class MainActivity extends Activity {
         mMidiManager.registerDeviceCallback(new DeviceCallback() {
             @Override
             public void onDeviceRemoved(final MidiDeviceInfo info) {
+                Log.i(TAG, "Device removed: " + info.toString());
                 mOpenDeviceListAdapter.remove(info);
             }
 
@@ -281,9 +282,12 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 if (midiDevice != null) {
+
                     BluetoothMidiDeviceTracker tracker = new BluetoothMidiDeviceTracker(
                             bluetoothDevice, midiDevice);
+
                     mOpenDeviceListAdapter.addDevice(tracker);
+                    Log.i(TAG, "MIDI device opened");
                 } else {
                     Toast.makeText(MainActivity.this,
                             "MIDI device open failed!", Toast.LENGTH_LONG)
@@ -357,6 +361,7 @@ public class MainActivity extends Activity {
                         new MidiManager.OnDeviceOpenedListener() {
                             @Override
                             public void onDeviceOpened(MidiDevice device) {
+                                Log.i(TAG, device.toString() + " opened");
                                 onBluetoothDeviceOpen(fBluetoothDevice, device);
                             }
                         }, null);

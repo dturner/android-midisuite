@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
     private MidiManager mMidiManager;
     private int mChannel; // ranges from 0 to 15
     private int[] mPrograms = new int[MidiConstants.MAX_CHANNELS]; // ranges from 0 to 127
-    private byte[] mByteBuffer = new byte[3];
+    private byte[] mByteBuffer = new byte[64];
 
     public class ChannelSpinnerActivity implements AdapterView.OnItemSelectedListener {
         @Override
@@ -116,6 +116,36 @@ public class MainActivity extends Activity {
         changeProgram(delta);
     }
 
+    public void onSysEx(View view){
+
+        // Send F0 00 21 10 78 3F F7
+        mByteBuffer[0] = MidiConstants.STATUS_SYSTEM_EXCLUSIVE;
+        mByteBuffer[1] = (byte) 0x00;
+        mByteBuffer[2] = (byte) 0x21;
+        mByteBuffer[3] = (byte) 0x10;
+        mByteBuffer[4] = (byte) 0x78;
+        mByteBuffer[5] = (byte) 0x3F;
+        mByteBuffer[6] = MidiConstants.STATUS_END_SYSEX;
+        midiSend(mByteBuffer, 7, -1);
+
+    }
+
+    public void onSysEx2(View view){
+
+        for (int i = 0; i < mByteBuffer.length - 1; i++){
+            byte val;
+            if (i == 0){
+                val = MidiConstants.STATUS_SYSTEM_EXCLUSIVE;
+            } else if (i == mByteBuffer.length - 1){
+                val = MidiConstants.STATUS_END_SYSEX;
+            } else {
+                val = (byte) i;
+            }
+            mByteBuffer[i] = val;
+        }
+        midiSend(mByteBuffer, mByteBuffer.length, -1);
+    }
+
     private void changeProgram(int delta) {
         int program = mPrograms[mChannel];
         program += delta;
@@ -175,7 +205,11 @@ public class MainActivity extends Activity {
                 // send event immediately
                 MidiReceiver receiver = mKeyboardReceiverSelector.getReceiver();
                 if (receiver != null) {
-                    receiver.send(buffer, 0, count, timestamp);
+                    if (timestamp != -1){
+                        receiver.send(buffer, 0, count, timestamp);
+                    } else {
+                        receiver.send(buffer, 0, count);
+                    }
                 }
             } catch (IOException e) {
                 Log.e(TAG, "mKeyboardReceiverSelector.send() failed " + e);
